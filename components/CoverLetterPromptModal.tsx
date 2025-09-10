@@ -1,7 +1,8 @@
 
+
 import React, { useState } from 'react';
-import { CloseIcon } from './icons/CloseIcon.tsx';
-import { SparklesIcon } from './icons/SparklesIcon.tsx';
+import { CloseIcon } from './icons/CloseIcon.js';
+import { SparklesIcon } from './icons/SparklesIcon.js';
 
 export interface CoverLetterPromptData {
   jobTitle: string;

@@ -1,4 +1,4 @@
-import type { CVData } from './types.ts';
+import type { CVData } from './types.js';
 
 export const LICENSE_CLASSES = {
   profesionales: ['A1', 'A2', 'A3', 'A4', 'A5'],

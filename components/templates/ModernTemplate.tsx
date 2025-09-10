@@ -1,13 +1,14 @@
 
 
+
 import React, { forwardRef } from 'react';
-import type { CVData, DrivingLicenseData, ExperienceEntry, SkillEntry } from '../../types.ts';
-import { EnvelopeIcon } from '../icons/EnvelopeIcon.tsx';
-import { PhoneIcon } from '../icons/PhoneIcon.tsx';
-import { LinkedinIcon } from '../icons/LinkedinIcon.tsx';
-import { GlobeIcon } from '../icons/GlobeIcon.tsx';
-import { LocationPinIcon } from '../icons/LocationPinIcon.tsx';
-import { LICENSE_CLASSES } from '../../constants.ts';
+import type { CVData, DrivingLicenseData, ExperienceEntry, SkillEntry } from '../../types.js';
+import { EnvelopeIcon } from '../icons/EnvelopeIcon.js';
+import { PhoneIcon } from '../icons/PhoneIcon.js';
+import { LinkedinIcon } from '../icons/LinkedinIcon.js';
+import { GlobeIcon } from '../icons/GlobeIcon.js';
+import { LocationPinIcon } from '../icons/LocationPinIcon.js';
+import { LICENSE_CLASSES } from '../../constants.js';
 
 interface CVPreviewProps {
   data: CVData;

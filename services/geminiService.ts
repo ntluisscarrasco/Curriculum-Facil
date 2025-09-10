@@ -1,7 +1,8 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
-import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.ts';
-import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.tsx';
+import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.js';
+import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.js';
 
 if (!process.env.API_KEY) {
   console.warn("API_KEY environment variable not set. Gemini API calls will fail.");
