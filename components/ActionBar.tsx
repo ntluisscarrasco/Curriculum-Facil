@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { UploadIcon } from './icons/UploadIcon';
-import { DownloadIcon } from './icons/DownloadIcon';
-import { DocumentTextIcon } from './icons/DocumentTextIcon';
+import { UploadIcon } from './icons/UploadIcon.tsx';
+import { DownloadIcon } from './icons/DownloadIcon.tsx';
+import { DocumentTextIcon } from './icons/DocumentTextIcon.tsx';
 
 interface ActionBarProps {
   isLoading: boolean;

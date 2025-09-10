@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { countries, Country } from '../data/countries';
-import { ChevronDownIcon } from './icons/ChevronDownIcon';
+import { countries, Country } from '../data/countries.ts';
+import { ChevronDownIcon } from './icons/ChevronDownIcon.tsx';
 
 interface CountryCodePickerProps {
   value: string;

@@ -1,10 +1,10 @@
 
 import React from 'react';
-import type { CVData } from '../types';
-import { CloseIcon } from './icons/CloseIcon';
-import { TrashIcon } from './icons/TrashIcon';
-import { PencilIcon } from './icons/PencilIcon';
-import { PlusIcon } from './icons/PlusIcon';
+import type { CVData } from '../types.ts';
+import { CloseIcon } from './icons/CloseIcon.tsx';
+import { TrashIcon } from './icons/TrashIcon.tsx';
+import { PencilIcon } from './icons/PencilIcon.tsx';
+import { PlusIcon } from './icons/PlusIcon.tsx';
 
 interface SavedCVsModalProps {
   isOpen: boolean;

@@ -1,13 +1,14 @@
 
 
+
 import React, { forwardRef } from 'react';
-import type { CVData, ExperienceEntry, EducationEntry, SkillEntry, ComplementaryTrainingEntry, DrivingLicenseData } from '../../types';
-import { EnvelopeIcon } from '../icons/EnvelopeIcon';
-import { PhoneIcon } from '../icons/PhoneIcon';
-import { LocationPinIcon } from '../icons/LocationPinIcon';
-import { LinkedinIcon } from '../icons/LinkedinIcon';
-import { GlobeIcon } from '../icons/GlobeIcon';
-import { LICENSE_CLASSES } from '../../constants';
+import type { CVData, ExperienceEntry, EducationEntry, SkillEntry, ComplementaryTrainingEntry, DrivingLicenseData } from '../../types.ts';
+import { EnvelopeIcon } from '../icons/EnvelopeIcon.tsx';
+import { PhoneIcon } from '../icons/PhoneIcon.tsx';
+import { LocationPinIcon } from '../icons/LocationPinIcon.tsx';
+import { LinkedinIcon } from '../icons/LinkedinIcon.tsx';
+import { GlobeIcon } from '../icons/GlobeIcon.tsx';
+import { LICENSE_CLASSES } from '../../constants.ts';
 
 // --- Template Configuration ---
 const ACCENT_COLOR_LIGHT = '#FCE8EC';

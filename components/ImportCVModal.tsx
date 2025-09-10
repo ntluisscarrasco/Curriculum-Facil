@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { CloseIcon } from './icons/CloseIcon';
-import { SparklesIcon } from './icons/SparklesIcon';
+import { CloseIcon } from './icons/CloseIcon.tsx';
+import { SparklesIcon } from './icons/SparklesIcon.tsx';
 
 interface ImportCVModalProps {
   isOpen: boolean;

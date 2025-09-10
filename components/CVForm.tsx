@@ -1,11 +1,11 @@
 
 import React from 'react';
-import type { CVData, EducationEntry, ExperienceEntry, ComplementaryTrainingEntry, SkillEntry } from '../types';
-import { PlusIcon } from './icons/PlusIcon';
-import { TrashIcon } from './icons/TrashIcon';
-import { PencilIcon } from './icons/PencilIcon';
-import { CountryCodePicker } from './CountryCodePicker';
-import { LICENSE_CLASSES } from '../constants';
+import type { CVData, EducationEntry, ExperienceEntry, ComplementaryTrainingEntry, SkillEntry } from '../types.ts';
+import { PlusIcon } from './icons/PlusIcon.tsx';
+import { TrashIcon } from './icons/TrashIcon.tsx';
+import { PencilIcon } from './icons/PencilIcon.tsx';
+import { CountryCodePicker } from './CountryCodePicker.tsx';
+import { LICENSE_CLASSES } from '../constants.ts';
 
 interface CVFormProps {
   data: CVData;

@@ -1,9 +1,9 @@
 
 import React from 'react';
-import type { CVData } from '../types';
-import { CloseIcon } from './icons/CloseIcon';
-import { CopyIcon } from './icons/CopyIcon';
-import { DownloadIcon } from './icons/DownloadIcon';
+import type { CVData } from '../types.ts';
+import { CloseIcon } from './icons/CloseIcon.tsx';
+import { CopyIcon } from './icons/CopyIcon.tsx';
+import { DownloadIcon } from './icons/DownloadIcon.tsx';
 
 declare const jspdf: any;
 

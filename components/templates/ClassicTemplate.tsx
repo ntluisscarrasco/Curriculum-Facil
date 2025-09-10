@@ -1,6 +1,7 @@
+
 import React, { forwardRef } from 'react';
-import type { CVData, DrivingLicenseData, ExperienceEntry } from '../../types';
-import { LICENSE_CLASSES } from '../../constants';
+import type { CVData, DrivingLicenseData, ExperienceEntry } from '../../types.ts';
+import { LICENSE_CLASSES } from '../../constants.ts';
 
 interface CVPreviewProps {
   data: CVData;
