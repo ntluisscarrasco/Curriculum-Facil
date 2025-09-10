@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { LightbulbIcon } from './icons/LightbulbIcon.js';
+import { LightbulbIcon } from './icons/LightbulbIcon.tsx';
 
 export const RecommendationBox: React.FC = () => {
   return (

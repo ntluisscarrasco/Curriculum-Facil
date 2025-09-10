@@ -48,6 +48,8 @@
 </head>
 <body class="bg-[#6699CC] font-sans">
   <div id="root"></div>
-  <script type="text/babel" data-type="module" src="./index.js"></script>
+  <!-- Carga la API Key desde un archivo local seguro (no versionado en Git) -->
+  <script src="./env.js"></script>
+  <script type="text/babel" data-presets="react,typescript" data-type="module" src="./index.tsx"></script>
 </body>
 </html>

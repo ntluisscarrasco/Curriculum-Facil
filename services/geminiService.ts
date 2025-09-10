@@ -1,14 +1,52 @@
-
-
 import { GoogleGenAI, Type } from "@google/genai";
-import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.js';
-import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.js';
+import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.ts';
+import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.tsx';
 
-if (!process.env.API_KEY) {
-  console.warn("API_KEY environment variable not set. Gemini API calls will fail.");
+// This lets TypeScript know about the `window.process` object we're creating in `env.js`
+declare global {
+  interface Window {
+    process?: {
+      env?: {
+        API_KEY?: string;
+      }
+    }
+  }
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const getApiKey = (): string | undefined => {
+  // Safely access the API key from the window object.
+  return window.process?.env?.API_KEY;
+};
+
+const API_KEY = getApiKey();
+let ai: GoogleGenAI | null = null;
+
+// Initialize the AI client only if the key is present and is not the placeholder value.
+if (API_KEY && API_KEY !== "TU_API_KEY_AQUÍ") {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+} else {
+  // Log a helpful error for the developer in the console.
+  console.error(
+    "Gemini API Key is not configured. " +
+    "Please create an `env.js` file in the project root and add your key. " +
+    "See README.md for detailed instructions."
+  );
+}
+
+/**
+ * A helper function to ensure the Gemini AI client is initialized.
+ * If not, it throws a user-friendly error that will be caught by the UI.
+ * @returns The initialized GoogleGenAI client.
+ */
+const getAiClient = (): GoogleGenAI => {
+  if (!ai) {
+    const errorMessage = "La API Key de Gemini no está configurada correctamente. Por favor, asegúrate de haber creado el archivo `env.js` y de haber reemplazado 'TU_API_KEY_AQUÍ' con tu clave real, como se indica en el archivo README.md.";
+    // The error will be caught by the `try...catch` blocks in App.tsx and shown as an alert.
+    throw new Error(errorMessage);
+  }
+  return ai;
+};
+
 
 export async function generateSummary(
   experience: ExperienceEntry[],
@@ -16,6 +54,7 @@ export async function generateSummary(
   skills: SkillEntry[],
   existingSummary: string
 ): Promise<string> {
+  const localAi = getAiClient();
   const model = "gemini-2.5-flash";
 
   if (experience.length === 0 && education.length === 0 && !existingSummary) {
@@ -95,7 +134,7 @@ export async function generateSummary(
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await localAi.models.generateContent({
       model: model,
       contents: prompt,
       config: {
@@ -118,6 +157,7 @@ export async function generateSummary(
 }
 
 export async function extractDataFromCV(cvText: string): Promise<Partial<CVData>> {
+  const localAi = getAiClient();
   const model = "gemini-2.5-flash";
 
   const schema = {
@@ -215,7 +255,7 @@ export async function extractDataFromCV(cvText: string): Promise<Partial<CVData>
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await localAi.models.generateContent({
       model: model,
       contents: prompt,
       config: {
@@ -245,6 +285,7 @@ export async function generateDescription(
   listName: 'experience' | 'complementaryTraining',
   item: ExperienceEntry | ComplementaryTrainingEntry
 ): Promise<string> {
+  const localAi = getAiClient();
   const model = "gemini-2.5-flash";
   let prompt: string;
 
@@ -280,7 +321,7 @@ export async function generateDescription(
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await localAi.models.generateContent({
       model: model,
       contents: prompt,
       config: {
@@ -303,6 +344,7 @@ export async function generateDescription(
 }
 
 export async function improveDescription(text: string, context: 'experience' | 'complementaryTraining'): Promise<string> {
+  const localAi = getAiClient();
   const model = "gemini-2.5-flash";
 
   if (!text.trim()) {
@@ -351,7 +393,7 @@ export async function improveDescription(text: string, context: 'experience' | '
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await localAi.models.generateContent({
       model: model,
       contents: prompt,
       config: {
@@ -379,6 +421,7 @@ export async function improveDescription(text: string, context: 'experience' | '
 }
 
 export async function generateCoverLetter(cvData: CVData, promptData: CoverLetterPromptData): Promise<string> {
+  const localAi = getAiClient();
   const model = "gemini-2.5-flash";
   const { personal, summary, experience, skills } = cvData;
   const { jobTitle, isGeneralApplication, companyName, isCompanyUnknown, recipientName, isRecipientUnknown } = promptData;
@@ -453,7 +496,7 @@ export async function generateCoverLetter(cvData: CVData, promptData: CoverLette
   `;
   
   try {
-    const response = await ai.models.generateContent({
+    const response = await localAi.models.generateContent({
       model: model,
       contents: prompt,
       config: {

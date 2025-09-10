@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { SpinnerIcon } from './icons/SpinnerIcon.js';
+import { SpinnerIcon } from './icons/SpinnerIcon.tsx';
 
 interface LoadingOverlayProps {
   message: string;
