@@ -13,38 +13,38 @@ declare global {
   }
 }
 
-const getApiKey = (): string | undefined => {
-  // Safely access the API key from the window object.
-  return window.process?.env?.API_KEY;
-};
-
-const API_KEY = getApiKey();
+// The AI client instance. We will initialize it lazily (on first use).
 let ai: GoogleGenAI | null = null;
 
-// Initialize the AI client only if the key is present and is not the placeholder value.
-if (API_KEY && API_KEY !== "TU_API_KEY_AQUÍ") {
-  ai = new GoogleGenAI({ apiKey: API_KEY });
-} else {
-  // Log a helpful error for the developer in the console.
-  console.error(
-    "Gemini API Key is not configured. " +
-    "Please create an `env.js` file in the project root and add your key. " +
-    "See README.md for detailed instructions."
-  );
-}
-
 /**
- * A helper function to ensure the Gemini AI client is initialized.
- * If not, it throws a user-friendly error that will be caught by the UI.
+ * A robust function to get the initialized Gemini AI client.
+ * It initializes the client on the first call and reuses the instance for subsequent calls.
+ * This "lazy initialization" prevents race conditions during the initial page load.
  * @returns The initialized GoogleGenAI client.
+ * @throws {Error} If the API key is not configured correctly.
  */
 const getAiClient = (): GoogleGenAI => {
-  if (!ai) {
+  // If the client is already initialized, return it immediately.
+  if (ai) {
+    return ai;
+  }
+
+  // Safely access the API key from the window object at the time of the call.
+  const apiKey = window.process?.env?.API_KEY;
+
+  // Check if the API key is present and is not the placeholder value.
+  if (apiKey && apiKey !== "TU_API_KEY_AQUÍ") {
+    // Initialize the client and store it in the `ai` variable for future use.
+    ai = new GoogleGenAI({ apiKey: apiKey });
+    return ai;
+  } else {
+    // If the key is missing or is still the placeholder, throw a user-friendly error.
+    // This helps the developer to correctly set up their environment.
     const errorMessage = "La API Key de Gemini no está configurada correctamente. Por favor, asegúrate de haber creado el archivo `env.js` y de haber reemplazado 'TU_API_KEY_AQUÍ' con tu clave real, como se indica en el archivo README.md.";
-    // The error will be caught by the `try...catch` blocks in App.tsx and shown as an alert.
+    
+    // This error will be caught by the `try...catch` blocks in App.tsx and shown as an alert.
     throw new Error(errorMessage);
   }
-  return ai;
 };
 
 
