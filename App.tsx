@@ -81,27 +81,21 @@ function App(): React.ReactNode {
   const previewRef = useRef<HTMLDivElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
-  const [apiKey, setApiKey] = useState<string | null>(null);
+  // The app now loads for everyone. The key is only requested when an AI feature is used.
+  const [apiKey, setApiKey] = useState<string | null>(() => localStorage.getItem('gemini-api-key'));
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
-
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('gemini-api-key');
-    if (savedApiKey) {
-      handleSaveApiKey(savedApiKey);
-    } else {
-      setIsApiKeyModalOpen(true);
-    }
-  }, []);
 
   const handleSaveApiKey = (key: string) => {
     try {
+      // We try to initialize the service to catch malformed keys early.
       initializeAi(key);
-      setApiKey(key);
       localStorage.setItem('gemini-api-key', key);
+      setApiKey(key);
       setIsApiKeyModalOpen(false);
+      alert('API Key guardada. Ahora puedes reintentar la acción que querías realizar.');
     } catch (error) {
-      console.error(error);
-      alert("La API Key parece ser inválida. Por favor, revísala.");
+      console.error("Invalid API Key format:", error);
+      alert("La API Key que ingresaste parece tener un formato inválido. Por favor, revísala.");
     }
   };
 
@@ -255,27 +249,49 @@ function App(): React.ReactNode {
     handleDataChange(listName, newList);
   }, [cvData, handleDataChange]);
 
+  const handleAiError = (e: unknown) => {
+    console.error("AI Error:", e);
+    const errorMessage = e instanceof Error ? e.message : "Ocurrió un error desconocido.";
+    if (errorMessage.toLowerCase().includes('api key')) {
+      alert("Tu API Key parece ser inválida o ha fallado. Por favor, ingrésala de nuevo.");
+      localStorage.removeItem('gemini-api-key');
+      setApiKey(null);
+      setIsApiKeyModalOpen(true);
+    } else {
+      alert(`Error: ${errorMessage}`);
+    }
+  };
+
   const handleGenerateSummary = useCallback(async () => {
+    const key = apiKey || localStorage.getItem('gemini-api-key');
+    if (!key) {
+        setIsApiKeyModalOpen(true);
+        return;
+    }
+
     const hasSummary = cvData.summary.trim().length > 0;
     setLoadingMessage(hasSummary ? "Mejorando perfil..." : "Generando perfil...");
     setSummaryError(null);
     try {
+      initializeAi(key);
       const summaryText = await generateSummary(cvData.experience, cvData.education, cvData.skills, cvData.summary);
       handleDataChange('summary', summaryText);
     } catch (e) {
-      console.error("Error generating summary:", e);
-      const errorMessage = e instanceof Error ? e.message : "No se pudo procesar el resumen. Inténtalo de nuevo.";
-      setLoadingMessage(null);
-      alert(`Error: ${errorMessage}`);
+      handleAiError(e);
     } finally {
       setLoadingMessage(null);
     }
-  }, [cvData.experience, cvData.education, cvData.skills, cvData.summary, handleDataChange]);
+  }, [apiKey, cvData.experience, cvData.education, cvData.skills, cvData.summary, handleDataChange]);
   
   const handleImproveDescription = useCallback(async (
     listName: 'experience' | 'complementaryTraining', 
     index: number
   ) => {
+    const key = apiKey || localStorage.getItem('gemini-api-key');
+    if (!key) {
+        setIsApiKeyModalOpen(true);
+        return;
+    }
     const item = cvData[listName][index];
     if (!item) return;
 
@@ -305,6 +321,7 @@ function App(): React.ReactNode {
     }
 
     try {
+        initializeAi(key);
         const newText = await promise;
         
         setCvData(prev => {
@@ -317,13 +334,11 @@ function App(): React.ReactNode {
         });
 
     } catch (e) {
-        console.error("Error with AI description:", e);
-        const errorMessage = e instanceof Error ? e.message : "No se pudo procesar la descripción.";
-        alert(`Error: ${errorMessage}`);
+        handleAiError(e);
     } finally {
         setLoadingMessage(null);
     }
-  }, [cvData]);
+  }, [apiKey, cvData]);
 
   const handleDownloadPdf = useCallback(async () => {
     const input = previewRef.current;
@@ -463,8 +478,16 @@ function App(): React.ReactNode {
   const toggleImportModal = () => setIsImportModalOpen(prev => !prev);
   
   const handleExtractData = async (cvText: string) => {
+    const key = apiKey || localStorage.getItem('gemini-api-key');
+    if (!key) {
+        setIsImportModalOpen(false); // Close current modal before opening API key modal
+        setIsApiKeyModalOpen(true);
+        return;
+    }
+
     setLoadingMessage("Analizando tu CV con IA...");
     try {
+        initializeAi(key);
         const extractedData = await extractDataFromCV(cvText);
 
         setCvData(prev => {
@@ -500,29 +523,33 @@ function App(): React.ReactNode {
         setFormVisible(true);
 
     } catch (e) {
-        console.error("Error extracting CV data:", e);
-        const errorMessage = e instanceof Error ? e.message : "No se pudo procesar el CV. Inténtalo de nuevo.";
-        alert(`Error: ${errorMessage}`);
+        handleAiError(e);
     } finally {
         setLoadingMessage(null);
     }
   };
 
   const handleGenerateCoverLetter = useCallback(async (promptData: CoverLetterPromptData) => {
+    const key = apiKey || localStorage.getItem('gemini-api-key');
+    if (!key) {
+        setIsCoverLetterPromptModalOpen(false); // Close current modal
+        setIsApiKeyModalOpen(true);
+        return;
+    }
+
     setIsCoverLetterPromptModalOpen(false);
     setLoadingMessage("Generando carta de presentación con IA...");
     try {
+      initializeAi(key);
       const letter = await generateCoverLetter(cvData, promptData);
       setCoverLetterContent(letter);
       setIsCoverLetterModalOpen(true);
     } catch (e) {
-      console.error("Error generating cover letter:", e);
-      const errorMessage = e instanceof Error ? e.message : "No se pudo generar la carta de presentación.";
-      alert(`Error: ${errorMessage}`);
+      handleAiError(e);
     } finally {
       setLoadingMessage(null);
     }
-  }, [cvData]);
+  }, [apiKey, cvData]);
 
   const toggleCoverLetterPromptModal = () => setIsCoverLetterPromptModalOpen(prev => !prev);
 
@@ -536,7 +563,7 @@ function App(): React.ReactNode {
         isOpen={isApiKeyModalOpen}
         onSave={handleSaveApiKey}
         currentApiKey={apiKey}
-        onClose={() => { if (apiKey) setIsApiKeyModalOpen(false); }}
+        onClose={() => setIsApiKeyModalOpen(false)}
       />
       
       <main className={`flex-grow flex flex-col ${formVisible ? 'container mx-auto p-4 md:p-8' : ''}`}>

@@ -1,20 +1,27 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.ts';
 import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.tsx';
 
-// The AI client instance. It will be initialized once.
+// The AI client instance and the key used to initialize it.
 let ai: GoogleGenAI | null = null;
+let currentKey: string | null = null;
 
 /**
  * Initializes the GoogleGenAI client with the provided API key.
- * This must be called once before any other function in this service can be used.
+ * Only creates a new instance if the key is different from the currently used one,
+ * making it efficient to call multiple times.
  * @param apiKey The user's Google Gemini API key.
  */
 export const initializeAi = (apiKey: string) => {
   if (!apiKey) {
     throw new Error("API Key is required to initialize the AI service.");
   }
-  ai = new GoogleGenAI({ apiKey });
+  // Only create a new instance if the key has changed or it's the first time.
+  if (apiKey !== currentKey) {
+    ai = new GoogleGenAI({ apiKey });
+    currentKey = apiKey;
+  }
 };
 
 /**
