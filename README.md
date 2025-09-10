@@ -11,46 +11,39 @@ Una aplicación web intuitiva para crear un currículum vitae formal y profesion
 - **Generador de Cartas de Presentación:** Crea cartas de presentación personalizadas basadas en los datos de tu CV y la oferta de trabajo.
 - **Descarga en PDF:** Exporta tu currículum finalizado en formato PDF de alta calidad con un solo clic.
 - **Sin Servidor:** Funciona completamente en el navegador, sin necesidad de un backend.
+- **Privacidad:** Tu API Key se guarda únicamente en el almacenamiento local de tu navegador y nunca se envía a ningún servidor.
 
-## 🚀 Cómo Ejecutar Localmente
+## 🚀 Cómo Ejecutar
 
-Esta es una aplicación web estática que no requiere un proceso de compilación complejo.
+Esta aplicación está diseñada para funcionar directamente en cualquier navegador web moderno y está desplegada en GitHub Pages.
 
-### Prerrequisitos
+### Uso en Línea
 
-- Un navegador web moderno (Chrome, Firefox, Safari, Edge).
-- Un editor de código para crear un archivo.
-- Opcional: [Node.js](https://nodejs.org/) y npm para usar un servidor de desarrollo local.
+¡Simplemente visita la página de la aplicación y comienza a crear tu CV!
 
-### Configuración
+### Configuración de la API Key
+
+Para utilizar las funciones de inteligencia artificial (generar resúmenes, importar CV, etc.), necesitarás una **API Key de Google Gemini**.
+
+1.  **Obtén tu API Key:** Si aún no tienes una, puedes obtenerla gratis en [Google AI Studio](https://aistudio.google.com/app/apikey).
+2.  **Ingrésala en la Aplicación:** La primera vez que abras la aplicación, aparecerá una ventana emergente solicitando tu API Key. Pégala allí y haz clic en "Guardar".
+3.  **¡Listo!** La clave se almacenará de forma segura en el `localStorage` de tu navegador, por lo que no tendrás que ingresarla nuevamente en el mismo dispositivo. Puedes cambiarla en cualquier momento haciendo clic en "Gestionar API Key".
+
+### Ejecución Local
+
+Si deseas ejecutar el proyecto en tu propia máquina:
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone https://github.com/tu-usuario/tu-repositorio.git
-    cd tu-repositorio
+    git clone https://github.com/tu-usuario/curriculum-facil.git
+    cd curriculum-facil
     ```
 
-2.  **Configura tu API Key de Gemini:**
-    La aplicación necesita una API Key de Google Gemini para funcionar. Debes crear un archivo en la raíz del proyecto para almacenar tu clave.
+2.  **Abre `index.html`:**
+    La forma más sencilla es abrir el archivo `index.html` directamente en tu navegador.
 
-    - Crea un nuevo archivo llamado `env.js`.
-    - Añade el siguiente contenido, reemplazando `"TU_API_KEY_AQUÍ"` con tu clave real:
-
-    ```javascript
-    // env.js
-    window.process = {
-      env: {
-        API_KEY: "TU_API_KEY_AQUÍ",
-      },
-    };
-    ```
-    > **Importante:** El archivo `env.js` está incluido en `.gitignore`, por lo que tu clave de API no se subirá accidentalmente a GitHub. **Nunca compartas tu clave de API públicamente.**
-
-3.  **Abre la aplicación:**
-    Simplemente abre el archivo `index.html` en tu navegador.
-
-    O, para una mejor experiencia de desarrollo (evitando problemas con CORS), puedes usar un servidor local:
-
+3.  **(Opcional) Usa un servidor local:**
+    Para una mejor experiencia, puedes usar un servidor de desarrollo simple. Si tienes Node.js instalado:
     ```bash
     # Instala 'serve' globalmente (si no lo tienes)
     npm install -g serve

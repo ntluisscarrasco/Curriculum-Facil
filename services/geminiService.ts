@@ -2,49 +2,31 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { CVData, ExperienceEntry, ComplementaryTrainingEntry, EducationEntry, SkillEntry } from '../types.ts';
 import type { CoverLetterPromptData } from '../components/CoverLetterPromptModal.tsx';
 
-// This lets TypeScript know about the `window.process` object we're creating in `env.js`
-declare global {
-  interface Window {
-    process?: {
-      env?: {
-        API_KEY?: string;
-      }
-    }
-  }
-}
-
-// The AI client instance. We will initialize it lazily (on first use).
+// The AI client instance. It will be initialized once.
 let ai: GoogleGenAI | null = null;
 
 /**
+ * Initializes the GoogleGenAI client with the provided API key.
+ * This must be called once before any other function in this service can be used.
+ * @param apiKey The user's Google Gemini API key.
+ */
+export const initializeAi = (apiKey: string) => {
+  if (!apiKey) {
+    throw new Error("API Key is required to initialize the AI service.");
+  }
+  ai = new GoogleGenAI({ apiKey });
+};
+
+/**
  * A robust function to get the initialized Gemini AI client.
- * It initializes the client on the first call and reuses the instance for subsequent calls.
- * This "lazy initialization" prevents race conditions during the initial page load.
  * @returns The initialized GoogleGenAI client.
- * @throws {Error} If the API key is not configured correctly.
+ * @throws {Error} If the client has not been initialized yet.
  */
 const getAiClient = (): GoogleGenAI => {
-  // If the client is already initialized, return it immediately.
-  if (ai) {
-    return ai;
+  if (!ai) {
+    throw new Error("El servicio de IA no se ha inicializado. Por favor, configura tu API Key primero.");
   }
-
-  // Safely access the API key from the window object at the time of the call.
-  const apiKey = window.process?.env?.API_KEY;
-
-  // Check if the API key is present and is not the placeholder value.
-  if (apiKey && apiKey !== "TU_API_KEY_AQUÍ") {
-    // Initialize the client and store it in the `ai` variable for future use.
-    ai = new GoogleGenAI({ apiKey: apiKey });
-    return ai;
-  } else {
-    // If the key is missing or is still the placeholder, throw a user-friendly error.
-    // This helps the developer to correctly set up their environment.
-    const errorMessage = "La API Key de Gemini no está configurada correctamente. Por favor, asegúrate de haber creado el archivo `env.js` y de haber reemplazado 'TU_API_KEY_AQUÍ' con tu clave real, como se indica en el archivo README.md.";
-    
-    // This error will be caught by the `try...catch` blocks in App.tsx and shown as an alert.
-    throw new Error(errorMessage);
-  }
+  return ai;
 };
 
 

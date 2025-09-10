@@ -4,6 +4,7 @@ import React from 'react';
 import { UploadIcon } from './icons/UploadIcon.tsx';
 import { DownloadIcon } from './icons/DownloadIcon.tsx';
 import { DocumentTextIcon } from './icons/DocumentTextIcon.tsx';
+import { KeyIcon } from './icons/KeyIcon.tsx';
 
 interface ActionBarProps {
   isLoading: boolean;
@@ -11,6 +12,7 @@ interface ActionBarProps {
     toggleImportModal: () => void;
     handleGenerateCoverLetter: () => void;
     handleDownloadPdf: () => void;
+    handleChangeApiKey: () => void;
   };
 }
 
@@ -31,6 +33,12 @@ export const ActionBar: React.FC<ActionBarProps> = ({ isLoading, handlers }) => 
           <span>Descargar PDF</span>
         </button>
       </div>
+       <div className="mt-4 pt-4 border-t border-gray-300 flex justify-center">
+          <button onClick={handlers.handleChangeApiKey} className="flex items-center gap-2 text-sm text-gray-600 font-semibold hover:text-gray-900 transition-colors">
+            <KeyIcon />
+            <span>Gestionar API Key</span>
+          </button>
+        </div>
     </div>
   );
 };

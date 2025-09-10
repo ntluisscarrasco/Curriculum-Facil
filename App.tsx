@@ -8,7 +8,7 @@ import { TemplateSelector } from './components/TemplateSelector.tsx';
 import { ClassicTemplate } from './components/templates/ClassicTemplate.tsx';
 import { ModernTemplate } from './components/templates/ModernTemplate.tsx';
 import { LoadingOverlay } from './components/LoadingOverlay.tsx';
-import { generateSummary, extractDataFromCV, improveDescription, generateDescription, generateCoverLetter } from './services/geminiService.ts';
+import { generateSummary, extractDataFromCV, improveDescription, generateDescription, generateCoverLetter, initializeAi } from './services/geminiService.ts';
 import { ImportCVModal } from './components/ImportCVModal.tsx';
 import { CreativeTemplate } from './components/templates/CreativeTemplate.tsx';
 import { ActionBar } from './components/ActionBar.tsx';
@@ -21,6 +21,7 @@ import { DownloadIcon } from './components/icons/DownloadIcon.tsx';
 import { CoverLetterModal } from './components/CoverLetterModal.tsx';
 import { CoverLetterPromptModal, type CoverLetterPromptData } from './components/CoverLetterPromptModal.tsx';
 import { FontSizeSelector } from './components/FontSizeSelector.tsx';
+import { ApiKeyModal } from './components/ApiKeyModal.tsx';
 
 declare const jspdf: any;
 declare const html2canvas: any;
@@ -79,6 +80,30 @@ function App(): React.ReactNode {
   const [formVisible, setFormVisible] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('gemini-api-key');
+    if (savedApiKey) {
+      handleSaveApiKey(savedApiKey);
+    } else {
+      setIsApiKeyModalOpen(true);
+    }
+  }, []);
+
+  const handleSaveApiKey = (key: string) => {
+    try {
+      initializeAi(key);
+      setApiKey(key);
+      localStorage.setItem('gemini-api-key', key);
+      setIsApiKeyModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("La API Key parece ser inválida. Por favor, revísala.");
+    }
+  };
 
   useEffect(() => {
     if (!formVisible) return;
@@ -506,6 +531,14 @@ function App(): React.ReactNode {
   return (
     <div className="min-h-screen flex flex-col font-sans">
       {isLoading && <LoadingOverlay message={loadingMessage!} />}
+      
+      <ApiKeyModal 
+        isOpen={isApiKeyModalOpen}
+        onSave={handleSaveApiKey}
+        currentApiKey={apiKey}
+        onClose={() => { if (apiKey) setIsApiKeyModalOpen(false); }}
+      />
+      
       <main className={`flex-grow flex flex-col ${formVisible ? 'container mx-auto p-4 md:p-8' : ''}`}>
         
         {formVisible ? (
@@ -564,6 +597,7 @@ function App(): React.ReactNode {
                       toggleImportModal,
                       handleGenerateCoverLetter: toggleCoverLetterPromptModal,
                       handleDownloadPdf,
+                      handleChangeApiKey: () => setIsApiKeyModalOpen(true),
                     }}
                   />
                 </div>
